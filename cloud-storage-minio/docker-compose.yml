@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+    minio:
+        image: minio/minio:latest
+        container_name: minio
+        ports:
+            - "9000:9000" # S3 API
+            - "9001:9001" # Console (UI)
+        # network_mode: "host"
+        environment:
+            MINIO_ROOT_USER: minioadmin
+            MINIO_ROOT_PASSWORD: minioadmin
+        # Tell MinIO where to listen for the console
+        command: server /export --console-address ":9001"
+
+    createbuckets:
+        image: minio/mc
+        depends_on:
+            - minio
+        entrypoint: >
+            /bin/sh -c "
+            sleep 5 &&
+            mc alias set local http://minio:9000 minioadmin minioadmin &&
+            mc mb --ignore-existing local/beacon-bucket &&
+            echo 'Bucket beacon-bucket ready.' &&
+            exit 0
+            "
+
+    beacon:
+        image: beacon:latest
+        depends_on:
+            createbuckets:
+                condition: service_completed_successfully
+        ports:
+            - "8080:8080" # Adjust the port mapping as needed
+        environment:
+            - BEACON_ADMIN_USERNAME=admin # Replace with your admin username
+            - BEACON_ADMIN_PASSWORD=securepassword # Replace with your admin password
+            - BEACON_VM_MEMORY_SIZE=4096 # Adjust memory allocation as needed (in MB)
+            - BEACON_DEFAULT_TABLE=default # Set default table name
+            - BEACON_LOG_LEVEL=INFO # Adjust log level
+            - BEACON_HOST=0.0.0.0 # Set IP address to listen on
+            - BEACON_PORT=8080 # Set port number
+
+            - BEACON_S3_DATA_LAKE=true # Enable S3 data lake
+            - BEACON_S3_ENDPOINT=http://minio:9000 # Set S3 endpoint
+            - BEACON_S3_BUCKET=beacon-bucket # Set S3 bucket name
+            - BEACON_S3_ACCESS_KEY_ID=minioadmin # Set S3 access key
+            - BEACON_S3_SECRET_ACCESS_KEY=minioadmin # Set S3 secret key
+        volumes:
+            - ./data/datasets:/beacon/data/datasets # Adjust the volume mapping as required
+            - ./data/tables:/beacon/data/tables # Adjust the volume mapping as required
+
+volumes:
+    data:
