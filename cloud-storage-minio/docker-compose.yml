@@ -27,7 +27,7 @@ services:
             "
 
     beacon:
-        image: ghcr.io/maris-development/beacon:community-nightly-latest
+        image: ghcr.io/maris-development/beacon:community-latest
         depends_on:
             createbuckets:
                 condition: service_completed_successfully
