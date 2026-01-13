@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     beacon:
-        image: ghcr.io/maris-development/beacon:community-latest
+        image: ghcr.io/maris-development/beacon:latest
         container_name: beacon
         restart: unless-stopped
         ports:
@@ -17,5 +17,5 @@ services:
             - BEACON_HOST=0.0.0.0 # Set IP address to listen on
             - BEACON_PORT=8080 # Set port number
         volumes:
-            - ./data/datasets:/beacon/data/datasets # Adjust the volume mapping as required
-            - ./data/tables:/beacon/data/tables # Adjust the volume mapping as required
+            - ./datasets:/beacon/data/datasets # Adjust the volume mapping as required
+            - ./tables:/beacon/data/tables # Adjust the volume mapping as required

@@ -21,13 +21,16 @@ services:
             /bin/sh -c "
             sleep 5 &&
             mc alias set local http://minio:9000 minioadmin minioadmin &&
+            mc ready local &&
             mc mb --ignore-existing local/beacon-bucket &&
-            echo 'Bucket beacon-bucket ready.' &&
+            mc anonymous set download local/beacon-bucket &&
+            mc anonymous get local/beacon-bucket &&
+            echo 'Bucket beacon-bucket ready with anonymous access.' &&
             exit 0
             "
 
     beacon:
-        image: ghcr.io/maris-development/beacon:community-latest
+        image: ghcr.io/maris-development/beacon:latest
         depends_on:
             createbuckets:
                 condition: service_completed_successfully
@@ -44,12 +47,12 @@ services:
             - BEACON_PORT=8080 # Set port number
 
             - BEACON_S3_DATA_LAKE=true # Enable S3 data lake
-            - BEACON_S3_ENDPOINT=http://minio:9000 # Set S3 endpoint
             - BEACON_S3_BUCKET=beacon-bucket # Set S3 bucket name
-            - BEACON_S3_ACCESS_KEY_ID=minioadmin # Set S3 access key
-            - BEACON_S3_SECRET_ACCESS_KEY=minioadmin # Set S3 secret key
+            - AWS_ENDPOINT=http://minio:9000 # Set S3 endpoint
+            - AWS_SKIP_SIGNATURE=true # Skip signature for anonymous access
+            # - AWS_ACCESS_KEY_ID=minioadmin # Set S3 access key, only needed if different from default and anonymous access is not used
+            # - AWS_SECRET_ACCESS_KEY=minioadmin # Set S3 secret key , only needed if different from default and anonymous access is not used
         volumes:
-            - ./data/datasets:/beacon/data/datasets # Adjust the volume mapping as required
             - ./data/tables:/beacon/data/tables # Adjust the volume mapping as required
 
 volumes:
