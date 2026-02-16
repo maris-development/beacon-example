@@ -1,6 +1,7 @@
 # Beacon Example Setup
 
 This repository contains various examples on how to setup Beacon for different environments.
+There are also [example notebooks](notebooks/) that show how to use the Python client to query data from Beacon and perform some basic analysis.
 
 ## Requirements
 
