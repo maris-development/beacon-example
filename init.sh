@@ -9,4 +9,6 @@ sed -i 's|index index.html index.htm;||' "$nginx_conf"
 
 systemctl restart nginx.service
 
-echo "Nginx configuration updated to serve the Docker container on port 8080." > init-log.txt
+echo "Nginx configuration updated to serve the Docker container on port 8080. " >> init-log.txt
+echo "Environment:" >> init-log.txt
+printenv >> init-log.txt
