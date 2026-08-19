@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
     beacon:
-        image: ghcr.io/maris-development/beacon:latest
+        image: ghcr.io/maris-development/beacon:${BEACON_VERSION:-latest} # Use the latest version of the Beacon image
         container_name: beacon
         restart: unless-stopped
         ports:
