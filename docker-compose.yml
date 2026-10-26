@@ -20,6 +20,7 @@ services:
             - BEACON_ENABLE_SYS_INFO=true 
             - BEACON_AUTH_ENFORCE=${BEACON_AUTH_ENFORCE:-false} # Set to true to enforce authentication
             - BEACON_AUTH_ANONYMOUS_ENABLED=${BEACON_AUTH_ANONYMOUS_ENABLED:-true} # Set to false to require authentication for all requests
+            - BEACON_MCP_ALLOWED_HOSTS=${BEACON_MCP_ALLOWED_HOSTS:-localhost} # Set allowed hosts for MCP requests
         volumes:
             - ${BEACON_DATASETS_PATH:-./datasets}:/beacon/data/datasets # Adjust the volume mapping as required
             - ./tables:/beacon/data/tables # Adjust the volume mapping as required
